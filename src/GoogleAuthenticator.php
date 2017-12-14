@@ -2,7 +2,7 @@
 
 namespace Otp;
 
-use ParagonIE\ConstantTime\Encoding;
+use ParagonIE\ConstantTime\Base32;
 
 /**
  * Google Authenticator
@@ -152,21 +152,21 @@ class GoogleAuthenticator
      * This could decode into anything. It's located here as a small helper
      * where code that might need base32 usually also needs something like this.
      *
-     * @param integer $length Exact length of output string
+     * @see https://tools.ietf.org/html/rfc4226#section-4
+     * R6 - The algorithm MUST use a strong shared secret.  The length of
+     * the shared secret MUST be at least 128 bits.  This document
+     * RECOMMENDs a shared secret length of 160 bits.
+     *
+     * @param int $length Exact length of output string
      *
      * @return string Base32 encoded random
      */
     public static function generateRandom($length = 16)
     {
-        $keys = array_merge(range('A','Z'), range(2,7)); // No padding char
-
-        $string = '';
-
-        for ($i = 0; $i < $length; $i++) {
-            $string .= $keys[random_int(0, 31)];
+        if (0 !== $length % 8) {
+            throw new \InvalidArgumentException('length must be divisible by 8');
         }
-
-        return $string;
+        return Base32::encodeUpper(random_bytes($length / 8 * 5));
     }
 
     /**

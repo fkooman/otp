@@ -81,10 +81,10 @@ class GoogleAuthenticatorTest extends TestCase
 	public function testGenerateRandom()
 	{
 	    // contains numbers 2-7 and letters A-Z in large letters, 16 chars long
-	    $this->assertRegExp('/[2-7A-Z]{16}/', GoogleAuthenticator::generateRandom());
+	    $this->assertRegExp('/^[2-7A-Z]{16}$/', GoogleAuthenticator::generateRandom());
 	
 	    // Can be told to make a longer secret
-	    $this->assertRegExp('/[2-7A-Z]{18}/', GoogleAuthenticator::generateRandom(18));
+	    $this->assertRegExp('/^[2-7A-Z]{32}$/', GoogleAuthenticator::generateRandom(32));
 	}
 
 	/**
